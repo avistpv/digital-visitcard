@@ -5,11 +5,18 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowRight} from "@fortawesome/free-solid-svg-icons";
 
 export default async function AccountPage({searchParams}) {
+
     const session = await getServerSession(authOptions);
     const preferredUsername = searchParams?.preferredUsername;
+
+    async function handleFormSubmit(formData) {
+        console.log({formData});
+    }
+
     if (!session) {
         redirect('/');
     }
+
     return (
         <div>
             <form>
@@ -21,6 +28,7 @@ export default async function AccountPage({searchParams}) {
                 </p>
                 <div className="max-w-xs mx-auto">
                     <input
+                        name="username"
                         className="text-center block p-2 mx-auto border border-slate-200 w-full rounded-lg mb-2"
                         defaultValue={preferredUsername}
                         type="text" placeholder="username"/>
@@ -31,7 +39,7 @@ export default async function AccountPage({searchParams}) {
                         <span>
                         Take your username
                         </span>
-                        <FontAwesomeIcon icon={faArrowRight} />
+                        <FontAwesomeIcon icon={faArrowRight}/>
                     </button>
                 </div>
 
