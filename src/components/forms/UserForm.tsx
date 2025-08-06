@@ -1,10 +1,16 @@
 'use client'
+
 import {signIn} from "next-auth/react";
 import {redirect} from "next/navigation";
-import {useEffect} from "react";
+import {FormEvent, useEffect} from "react";
+import {useRouter} from "next/navigation";
 
+interface UserFormProps {
+    user: boolean;
+}
 
-export default function UserForm() {
+export default function UserForm({user}: UserFormProps) {
+    const router = useRouter();
     useEffect(() => {
         if (
             'localStorage' in window && window.localStorage.getItem('preferredUsername')
@@ -15,14 +21,18 @@ export default function UserForm() {
         }
     }, []);
 
-    async function handleSubmit(event) {
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        const form = event.target;
+        const form = event.target as HTMLFormElement;
         const input = form.querySelector("input");
-        const username = input.value;
+        const username = input?.value;
         if (username && username.length > 0) {
-            window.localStorage.setItem("preferredUsername", username);
-            await signIn('google')
+            if (user) {
+                router.push('/account?preferredUsername=' + username);
+            } else {
+                window.localStorage.setItem("preferredUsername", username);
+                await signIn('google');
+            }
         }
     }
 
@@ -35,6 +45,7 @@ export default function UserForm() {
                         webSiteName.to/
                     </span>
             <input
+                name="username"
                 type="text"
                 className="py-4"
                 placeholder="username"/>
